@@ -1,0 +1,36 @@
+name: Extract ZIP file name
+
+on: 
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  identify-zip:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: List files in the directory
+      run: ls -1 > files.txt
+
+    - name: Find ZIP file and store the names
+      #id: find_zip
+      run: |
+        zip_file=$(grep -E '\.zip$' files.txt || echo "")
+        if [ -z "$zip_file" ]; then
+          echo "No ZIP file found."
+          exit 0
+        fi
+        zip_file_without_ext="${zip_file%.zip}"
+        echo "ZIP_FILE_NAME=$zip_file" >> $GITHUB_ENV
+        echo "ZIP_FILE_NAME_WITHOUT_EXT=$zip_file_without_ext" >> $GITHUB_ENV
+
+    - name: Display the variables
+      if: env.ZIP_FILE_NAME != ''
+      run: |
+        echo "ZIP File Name with extension: ${{ env.ZIP_FILE_NAME }}"
+        echo "ZIP File Name without extension: ${{ env.ZIP_FILE_NAME_WITHOUT_EXT }}"

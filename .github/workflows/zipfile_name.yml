@@ -49,8 +49,9 @@ jobs:
     - name: Extract groupId from POM parent element
       run: |
         while IFS= read -r pom_path; do
-          group_id=$(grep -oP '(?<=<parent>.*<groupId>).*?(?=</groupId>)' "$pom_path")
           echo "Processing $pom_path"
+          group_id_line=$(grep -A 2 '<parent>' "$pom_path" | grep '<groupId>' | head -n 1)
+          group_id=$(echo "$group_id_line" | sed -e 's/.*<groupId>\(.*\)<\/groupId>.*/\1/')
           echo "Parent groupId: $group_id"
           echo "$group_id" >> group_ids.txt
         done < pom_paths.txt

@@ -49,13 +49,13 @@ jobs:
     - name: Extract groupId from POM parent element
       run: |
         while IFS= read -r pom_path; do
-          group_id=$(xmllint --xpath "string(//parent/groupId)" "$pom_path")
+          group_id=$(grep -oP '(?<=<parent>.*<groupId>).*?(?=</groupId>)' "$pom_path")
           echo "Processing $pom_path"
           echo "Parent groupId: $group_id"
-         # echo "$group_id" >> group_ids.txt
+          echo "$group_id" >> group_ids.txt
         done < pom_paths.txt
 
-    #- name: Print all extracted groupIds
-    #  run: |
-    #    echo "Extracted groupIds:"
-     #   cat group_ids.txt
+    - name: Print all extracted groupIds
+      run: |
+        echo "Extracted groupIds:"
+        cat group_ids.txt

@@ -1,1 +1,3 @@
 Command to list the files in linux is ---- date
+hostname
+ifconfig -a
